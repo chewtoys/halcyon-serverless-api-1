@@ -1,0 +1,290 @@
+service: halcyon-serverless-api
+
+provider:
+    name: aws
+    runtime: nodejs8.10
+    stage: dev
+    region: eu-west-1
+    memorySize: 1024
+    logRetentionInDays: 3
+    environment:
+        MONGODB: ${env:MONGODB, ''}
+        JWT_SECURITY_KEY: ${env:JWT_SECURITY_KEY, ''}
+        SEED_EMAIL_ADDRESS: ${env:SEED_EMAIL_ADDRESS, ''}
+        SEED_PASSWORD: ${env:SEED_PASSWORD, ''}
+        EMAIL_HOST: ${env:EMAIL_HOS, ''}
+        EMAIL_PORT: ${env:EMAIL_PORT, ''}
+        EMAIL_USERNAME: ${env:EMAIL_USERNAME, ''}
+        EMAIL_PASSWORD: ${env:EMAIL_PASSWORD, ''}
+        EMAIL_NOREPLY: ${env:EMAIL_NOREPLY, ''}
+        FACEBOOK_APP_ID: ${env:FACEBOOK_APP_ID, ''}
+        FACEBOOK_APP_SECRET: ${env:FACEBOOK_APP_SECRET, ''}
+        GOOGLE_CLIENT_ID: ${env:GOOGLE_CLIENT_ID, ''}
+
+plugins:
+    - serverless-webpack
+    - serverless-offline
+    - serverless-dotenv-plugin
+
+package:
+    individually: true
+
+functions:
+    tokenAuthorizer:
+        handler: src/authorizers/tokenAuthorizer.handler
+
+    register:
+        handler: src/api/account/register.handler
+        events:
+            - http:
+                  method: POST
+                  path: account/register
+                  cors: true
+
+    registerExternal:
+        handler: src/api/account/registerExternal.handler
+        events:
+            - http:
+                  method: POST
+                  path: account/registerexternal
+                  cors: true
+
+    forgotPassword:
+        handler: src/api/account/forgotPassword.handler
+        events:
+            - http:
+                  method: PUT
+                  path: account/forgotpassword
+                  cors: true
+
+    resetPassword:
+        handler: src/api/account/resetPassword.handler
+        events:
+            - http:
+                  method: PUT
+                  path: account/resetpassword
+                  cors: true
+
+    getProfile:
+        handler: src/api/manage/getProfile.handler
+        events:
+            - http:
+                  method: GET
+                  path: manage
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    updateProfile:
+        handler: src/api/manage/updateProfile.handler
+        events:
+            - http:
+                  method: PUT
+                  path: manage
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    verifyEmail:
+        handler: src/api/manage/verifyEmail.handler
+        events:
+            - http:
+                  method: PUT
+                  path: manage/verifyemail
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    confirmEmail:
+        handler: src/api/manage/confirmEmail.handler
+        events:
+            - http:
+                  method: PUT
+                  path: manage/confirmemail
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    changePassword:
+        handler: src/api/manage/changePassword.handler
+        events:
+            - http:
+                  method: PUT
+                  path: manage/changepassword
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    setPassword:
+        handler: src/api/manage/setPassword.handler
+        events:
+            - http:
+                  method: PUT
+                  path: manage/setpassword
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    addLogin:
+        handler: src/api/manage/addLogin.handler
+        events:
+            - http:
+                  method: POST
+                  path: manage/login
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    removeLogin:
+        handler: src/api/manage/removeLogin.handler
+        events:
+            - http:
+                  method: DELETE
+                  path: manage/login
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    getTwoFactorConfig:
+        handler: src/api/manage/getTwoFactorConfig.handler
+        events:
+            - http:
+                  method: GET
+                  path: manage/twofactor
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    enableTwoFactor:
+        handler: src/api/manage/enableTwoFactor.handler
+        events:
+            - http:
+                  method: POST
+                  path: manage/twofactor
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    disableTwoFactor:
+        handler: src/api/manage/disableTwoFactor.handler
+        events:
+            - http:
+                  method: DELETE
+                  path: manage/twofactor
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    deleteaccount:
+        handler: src/api/manage/deleteAccount.handler
+        events:
+            - http:
+                  method: DELETE
+                  path: manage
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    seedData:
+        handler: src/api/seed/seedData.handler
+        events:
+            - http:
+                  method: DELETE
+                  path: seed
+                  cors: true
+
+    getToken:
+        handler: src/api/token/getToken.handler
+        events:
+            - http:
+                  method: POST
+                  path: token
+                  cors: true
+
+    getUsers:
+        handler: src/api/user/getUsers.handler
+        events:
+            - http:
+                  method: GET
+                  path: user
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          querystrings:
+                              page: false
+                              size: false
+                              search: false
+                              sort: false
+
+    createUser:
+        handler: src/api/user/createUser.handler
+        events:
+            - http:
+                  method: POST
+                  path: user
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+
+    getUser:
+        handler: src/api/user/getUser.handler
+        events:
+            - http:
+                  method: GET
+                  path: user/{id}
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          paths:
+                              id: true
+
+    updateUser:
+        handler: src/api/user/updateUser.handler
+        events:
+            - http:
+                  method: PUT
+                  path: user/{id}
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          paths:
+                              id: true
+
+    lockUser:
+        handler: src/api/user/lockUser.handler
+        events:
+            - http:
+                  method: PUT
+                  path: user/{id}/lock
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          paths:
+                              id: true
+
+    unlockUser:
+        handler: src/api/user/unlockUser.handler
+        events:
+            - http:
+                  method: PUT
+                  path: user/{id}/unlock
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          paths:
+                              id: true
+
+    deleteUser:
+        handler: src/api/user/deleteUser.handler
+        events:
+            - http:
+                  method: DELETE
+                  path: user/{id}
+                  cors: true
+                  authorizer: ${self:custom.authorizers.tokenAuthorizer}
+                  request:
+                      parameters:
+                          paths:
+                              id: true
+
+custom:
+    serverless-offline:
+        port: 3001
+
+    authorizers:
+        tokenAuthorizer:
+            name: tokenAuthorizer
+            resultTtlInSeconds: 0
+            type: token

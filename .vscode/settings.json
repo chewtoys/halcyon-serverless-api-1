@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/.serverless": true,
+        "**/.webpack": true
+    },
+    "editor.tabSize": 4,
+    "editor.autoIndent": true,
+    "editor.detectIndentation": false
+}
