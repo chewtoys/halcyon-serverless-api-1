@@ -10,6 +10,8 @@ A Serverless api project template.
     [https://serverless.com](https://serverless.com)
 -   TypeScript
     [https://www.typescriptlang.org](https://www.typescriptlang.org)
+-   AWS Lambda
+    [https://aws.amazon.com/lambda](https://aws.amazon.com/lambda)
 -   MongoDB
     [https://www.mongodb.com](https://www.mongodb.com)
 
