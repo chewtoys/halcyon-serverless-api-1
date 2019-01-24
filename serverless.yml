@@ -177,7 +177,7 @@ functions:
         handler: src/api/seed/seedData.handler
         events:
             - http:
-                  method: DELETE
+                  method: GET
                   path: seed
                   cors: true
 
